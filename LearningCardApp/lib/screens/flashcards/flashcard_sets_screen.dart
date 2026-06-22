@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../providers/flashcard_provider.dart';
+
+import '../../providers/flashcard_set_provider.dart';
+import 'flashcard_detail_screen.dart';
 
 class FlashcardSetsScreen extends StatefulWidget {
   const FlashcardSetsScreen({super.key});
@@ -13,110 +15,72 @@ class _FlashcardSetsScreenState extends State<FlashcardSetsScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      context.read<FlashcardProvider>().loadSets();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<FlashcardSetProvider>().loadSets();
     });
   }
 
-  void showCreateDialog() {
+  Future<void> _showCreateDialog() async {
     final titleController = TextEditingController();
-    final descriptionController = TextEditingController();
-
-    showDialog(
+    final descController = TextEditingController();
+    await showDialog(
       context: context,
-      builder: (_) {
-        return AlertDialog(
-          title: const Text('Create Flashcard Set'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: titleController,
-                decoration: const InputDecoration(
-                  labelText: 'Title',
-                ),
-              ),
-              TextField(
-                controller: descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Description',
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                await context.read<FlashcardProvider>().addSet(
-                  titleController.text,
-                  descriptionController.text,
-                );
-
-                if (!mounted) return;
-                Navigator.pop(context);
-              },
-              child: const Text('Create'),
-            ),
+      builder: (_) => AlertDialog(
+        title: const Text('Tao flashcard set'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(controller: titleController, decoration: const InputDecoration(labelText: 'Title')),
+            const SizedBox(height: 12),
+            TextField(controller: descController, decoration: const InputDecoration(labelText: 'Description')),
           ],
-        );
-      },
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Huy')),
+          ElevatedButton(
+            onPressed: () async {
+              await context.read<FlashcardSetProvider>().createSet(title: titleController.text.trim(), description: descController.text.trim());
+              if (!mounted) return;
+              Navigator.pop(context);
+            },
+            child: const Text('Luu'),
+          ),
+        ],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<FlashcardProvider>();
-
+    final provider = context.watch<FlashcardSetProvider>();
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Flashcard Sets'),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: showCreateDialog,
-        icon: const Icon(Icons.add),
-        label: const Text('New Set'),
-      ),
+      appBar: AppBar(title: const Text('Flashcard Sets')),
+      floatingActionButton: FloatingActionButton(onPressed: _showCreateDialog, child: const Icon(Icons.add)),
       body: provider.isLoading
           ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-        padding: const EdgeInsets.all(20),
-        itemCount: provider.sets.length,
-        itemBuilder: (context, index) {
-          final set = provider.sets[index];
-
-          return Container(
-            margin: const EdgeInsets.only(bottom: 16),
-            child: Card(
-              child: ListTile(
-                contentPadding: const EdgeInsets.all(18),
-                leading: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF6C63FF).withOpacity(0.12),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: const Icon(
-                    Icons.style,
-                    color: Color(0xFF6C63FF),
-                  ),
-                ),
-                title: Text(
-                  set.title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
+          : provider.sets.isEmpty
+              ? const Center(child: Text('Chua co bo the nao. Nhan + de tao bo the dau tien.'))
+              : RefreshIndicator(
+                  onRefresh: provider.loadSets,
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(20),
+                    itemCount: provider.sets.length,
+                    itemBuilder: (_, index) {
+                      final set = provider.sets[index];
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(18),
+                          title: Text(set.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                          subtitle: Text('${set.description}\n${set.cardCount} cards'),
+                          isThreeLine: true,
+                          trailing: IconButton(icon: const Icon(Icons.delete_outline), onPressed: () => context.read<FlashcardSetProvider>().deleteSet(set.id)),
+                          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => FlashcardDetailScreen(flashcardSet: set))),
+                        ),
+                      );
+                    },
                   ),
                 ),
-                subtitle: Text(set.description),
-                trailing: const Icon(Icons.arrow_forward_ios_rounded),
-              ),
-            ),
-          );
-        },
-      ),
     );
   }
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+
+import '../../widgets/gradient_card.dart';
+import '../ai/ai_chat_screen.dart';
 import '../flashcards/flashcard_sets_screen.dart';
 import '../notes/handwriting_note_screen.dart';
-import '../ai/ai_chat_screen.dart';
 import '../profile/profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -14,51 +16,27 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int selectedIndex = 0;
 
-  final screens = const [
-    DashboardView(),
-    FlashcardSetsScreen(),
-    HandwritingNoteScreen(),
-    AiChatScreen(),
-    ProfileScreen(),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final pages = [
+      DashboardView(onChangeTab: (index) => setState(() => selectedIndex = index)),
+      const FlashcardSetsScreen(),
+      const HandwritingNoteScreen(),
+      const AiChatScreen(),
+      const ProfileScreen(),
+    ];
+
     return Scaffold(
-      body: screens[selectedIndex],
+      body: pages[selectedIndex],
       bottomNavigationBar: NavigationBar(
         selectedIndex: selectedIndex,
-        onDestinationSelected: (index) {
-          setState(() {
-            selectedIndex = index;
-          });
-        },
+        onDestinationSelected: (index) => setState(() => selectedIndex = index),
         destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.dashboard_outlined),
-            selectedIcon: Icon(Icons.dashboard),
-            label: 'Home',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.style_outlined),
-            selectedIcon: Icon(Icons.style),
-            label: 'Cards',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.edit_note_outlined),
-            selectedIcon: Icon(Icons.edit_note),
-            label: 'Notes',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.smart_toy_outlined),
-            selectedIcon: Icon(Icons.smart_toy),
-            label: 'AI',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
-            label: 'Profile',
-          ),
+          NavigationDestination(icon: Icon(Icons.dashboard_outlined), label: 'Home'),
+          NavigationDestination(icon: Icon(Icons.style_outlined), label: 'Cards'),
+          NavigationDestination(icon: Icon(Icons.draw_outlined), label: 'Notes'),
+          NavigationDestination(icon: Icon(Icons.smart_toy_outlined), label: 'AI'),
+          NavigationDestination(icon: Icon(Icons.person_outline), label: 'Profile'),
         ],
       ),
     );
@@ -66,129 +44,60 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class DashboardView extends StatelessWidget {
-  const DashboardView({super.key});
+  final ValueChanged<int> onChangeTab;
+
+  const DashboardView({super.key, required this.onChangeTab});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Smart Study'),
-      ),
+      appBar: AppBar(title: const Text('Smart Dashboard')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [
-                  Color(0xFF6C63FF),
-                  Color(0xFF8D86FF),
+          GradientCard(
+            colors: const [Color(0xFF7C6CFF), Color(0xFFA394FF)],
+            child: const Padding(
+              padding: EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Hoc thong minh hon moi ngay', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 10),
+                  Text('Flashcard, ghi chu viet tay va AI chatbot trong cung mot app.', style: TextStyle(color: Colors.white70)),
                 ],
               ),
-              borderRadius: BorderRadius.circular(28),
-            ),
-            child: const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Hello, learner!',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  'Continue your flashcards and handwritten notes today.',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 15,
-                  ),
-                ),
-              ],
             ),
           ),
           const SizedBox(height: 24),
-          const Text(
-            'Quick Actions',
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 16),
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-            children: const [
-              _DashboardCard(
-                icon: Icons.add_card,
-                title: 'Create Set',
-                subtitle: 'New flashcards',
-              ),
-              _DashboardCard(
-                icon: Icons.quiz,
-                title: 'Quiz Mode',
-                subtitle: 'Test memory',
-              ),
-              _DashboardCard(
-                icon: Icons.draw,
-                title: 'Write Note',
-                subtitle: 'Handwriting',
-              ),
-              _DashboardCard(
-                icon: Icons.auto_awesome,
-                title: 'Ask AI',
-                subtitle: 'Explain lesson',
-              ),
-            ],
-          ),
+          _QuickCard(title: 'Flashcard Sets', subtitle: 'Tao bo the va hoc nhanh', icon: Icons.collections_bookmark, onTap: () => onChangeTab(1)),
+          _QuickCard(title: 'Handwriting Notes', subtitle: 'Viet tay nhu vo ghi chu', icon: Icons.draw, onTap: () => onChangeTab(2)),
+          _QuickCard(title: 'AI Chatbox', subtitle: 'Hoi bai va tao flashcard', icon: Icons.smart_toy, onTap: () => onChangeTab(3)),
         ],
       ),
     );
   }
 }
 
-class _DashboardCard extends StatelessWidget {
-  final IconData icon;
+class _QuickCard extends StatelessWidget {
   final String title;
   final String subtitle;
+  final IconData icon;
+  final VoidCallback onTap;
 
-  const _DashboardCard({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-  });
+  const _QuickCard({required this.title, required this.subtitle, required this.icon, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, size: 34, color: const Color(0xFF6C63FF)),
-            const Spacer(),
-            Text(
-              title,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 17,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              subtitle,
-              style: const TextStyle(color: Colors.grey),
-            ),
-          ],
-        ),
+      margin: const EdgeInsets.only(bottom: 16),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(16),
+        leading: CircleAvatar(backgroundColor: const Color(0xFFECE9FF), child: Icon(icon, color: const Color(0xFF7C6CFF))),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
+        subtitle: Text(subtitle),
+        trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 18),
+        onTap: onTap,
       ),
     );
   }

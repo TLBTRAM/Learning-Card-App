@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../providers/auth_provider.dart';
 import '../auth/login_screen.dart';
+import '../home/home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -12,15 +16,17 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    _bootstrap();
+  }
 
-    Future.delayed(const Duration(seconds: 2), () {
-      if (!mounted) return;
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
-      );
-    });
+  Future<void> _bootstrap() async {
+    final authProvider = context.read<AuthProvider>();
+    await authProvider.tryAutoLogin();
+    if (!mounted) return;
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => authProvider.isAuthenticated ? const HomeScreen() : const LoginScreen()),
+    );
   }
 
   @override
@@ -28,14 +34,9 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(28),
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0xFF6C63FF),
-              Color(0xFF8D86FF),
-              Color(0xFFFFB86C),
-            ],
+            colors: [Color(0xFF7C6CFF), Color(0xFFA394FF), Color(0xFFFFC58F)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -43,30 +44,13 @@ class _SplashScreenState extends State<SplashScreen> {
         child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.auto_stories_rounded,
-              size: 90,
-              color: Colors.white,
-            ),
-            SizedBox(height: 24),
-            Text(
-              'Smart Flashcard Notes',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            SizedBox(height: 12),
-            Text(
-              'Learn smarter. Write freely. Ask AI.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.white70,
-              ),
-            ),
+            Icon(Icons.auto_stories_rounded, color: Colors.white, size: 90),
+            SizedBox(height: 20),
+            Text('LearningCardApp', style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold)),
+            SizedBox(height: 8),
+            Text('Smart Flashcard Notes', style: TextStyle(color: Colors.white70)),
+            SizedBox(height: 28),
+            CircularProgressIndicator(color: Colors.white),
           ],
         ),
       ),
