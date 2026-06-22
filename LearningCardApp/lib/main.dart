@@ -1,26 +1,31 @@
 import 'package:flutter/material.dart';
-import 'screens/home_screen.dart';
+import 'package:provider/provider.dart';
+
+import 'core/theme/app_theme.dart';
+import 'providers/auth_provider.dart';
+import 'providers/flashcard_provider.dart';
+import 'screens/splash/splash_screen.dart';
 
 void main() {
-  runApp(const MemoCardApp());
+  runApp(const SmartFlashcardNotesApp());
 }
 
-class MemoCardApp extends StatelessWidget {
-  const MemoCardApp({super.key});
+class SmartFlashcardNotesApp extends StatelessWidget {
+  const SmartFlashcardNotesApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'KotobaBox',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        scaffoldBackgroundColor: const Color(0xffF7F3EA),
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xff5BA199),
-        ),
-        useMaterial3: true,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => FlashcardProvider()),
+      ],
+      child: MaterialApp(
+        title: 'Smart Flashcard Notes',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.lightTheme,
+        home: const SplashScreen(),
       ),
-      home: const HomeScreen(),
     );
   }
 }
