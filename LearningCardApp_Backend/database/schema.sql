@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS notes (
     user_id INT NOT NULL,
     title VARCHAR(150) NOT NULL,
     content_text TEXT,
-    drawing_data JSON,
+    drawing_data LONGTEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_notes_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
