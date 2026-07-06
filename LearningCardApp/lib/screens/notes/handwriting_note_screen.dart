@@ -74,7 +74,7 @@ class _HandwritingNoteScreenState extends State<HandwritingNoteScreen> {
     if (!mounted) return;
     if (note != null) {
       _editingNoteId = note.id;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Da luu note')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Đã lưu note')));
     }
   }
 
@@ -87,13 +87,15 @@ class _HandwritingNoteScreenState extends State<HandwritingNoteScreen> {
   Widget build(BuildContext context) {
     final provider = context.watch<NoteProvider>();
     return Scaffold(
-      appBar: AppBar(title: const Text('Handwriting Notes')),
+      appBar: AppBar(
+        title: const Text('Handwriting Notes'),
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          TextField(controller: _titleController, decoration: const InputDecoration(labelText: 'Ten note')),
+          TextField(controller: _titleController, decoration: const InputDecoration(labelText: 'Tên note')),
           const SizedBox(height: 12),
-          TextField(controller: _contentController, maxLines: 3, decoration: const InputDecoration(labelText: 'Ghi chu text ngan')),
+          TextField(controller: _contentController, maxLines: 3, decoration: const InputDecoration(labelText: 'Ghi chú text ngắn')),
           const SizedBox(height: 16),
           Row(
             children: [
@@ -132,20 +134,20 @@ class _HandwritingNoteScreenState extends State<HandwritingNoteScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          ElevatedButton(onPressed: _saveNote, child: const Text('Luu note')),
+          ElevatedButton(onPressed: _saveNote, child: const Text('Lưu note')),
           const SizedBox(height: 20),
           const Text('Saved Notes', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           if (provider.isLoading)
             const Center(child: CircularProgressIndicator())
           else if (provider.notes.isEmpty)
-            const Padding(padding: EdgeInsets.all(20), child: Text('Chua co note nao.'))
+            const Padding(padding: EdgeInsets.all(20), child: Text('Chưa có note nào.'))
           else
             ...provider.notes.map(
               (note) => Card(
                 child: ListTile(
                   title: Text(note.title),
-                  subtitle: Text(note.contentText.isEmpty ? 'Co du lieu drawing canvas' : note.contentText),
+                  subtitle: Text(note.contentText.isEmpty ? 'Có dữ liệu Drawings Canvas' : note.contentText),
                   onTap: () => _loadNote(note),
                   trailing: IconButton(onPressed: () => context.read<NoteProvider>().deleteNote(note.id), icon: const Icon(Icons.delete_outline)),
                 ),

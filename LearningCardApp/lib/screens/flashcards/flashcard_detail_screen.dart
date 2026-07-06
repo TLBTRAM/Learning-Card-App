@@ -49,7 +49,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
           if (provider.isLoading)
             const Center(child: CircularProgressIndicator())
           else if (provider.cards.isEmpty)
-            const Center(child: Padding(padding: EdgeInsets.all(40), child: Text('Set nay chua co card.')))
+            const Center(child: Padding(padding: EdgeInsets.all(40), child: Text('Set này chưa có card.')))
           else
             ...provider.cards.map((card) => FlashcardItem(card: card, onDelete: () => context.read<FlashcardProvider>().deleteCard(widget.flashcardSet.id, card.id))),
         ],

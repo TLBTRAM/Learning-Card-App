@@ -36,14 +36,14 @@ class _FlashcardSetsScreenState extends State<FlashcardSetsScreen> {
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Huy')),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Hủy')),
           ElevatedButton(
             onPressed: () async {
               await context.read<FlashcardSetProvider>().createSet(title: titleController.text.trim(), description: descController.text.trim());
               if (!mounted) return;
               Navigator.pop(context);
             },
-            child: const Text('Luu'),
+            child: const Text('Lưu'),
           ),
         ],
       ),
@@ -59,7 +59,7 @@ class _FlashcardSetsScreenState extends State<FlashcardSetsScreen> {
       body: provider.isLoading
           ? const Center(child: CircularProgressIndicator())
           : provider.sets.isEmpty
-              ? const Center(child: Text('Chua co bo the nao. Nhan + de tao bo the dau tien.'))
+              ? const Center(child: Text('Chưa có bộ thế nào. Nhấn + để tạo bộ thẻ đầu tiên.'))
               : RefreshIndicator(
                   onRefresh: provider.loadSets,
                   child: ListView.builder(

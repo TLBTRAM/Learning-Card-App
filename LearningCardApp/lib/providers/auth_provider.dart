@@ -37,7 +37,7 @@ class AuthProvider extends ChangeNotifier {
       user = result['user'] as UserModel;
       return true;
     } catch (error) {
-      errorMessage = error.toString();
+      errorMessage = error.toString().replaceFirst('Exception: ', '');
       return false;
     } finally {
       isLoading = false;
@@ -47,14 +47,12 @@ class AuthProvider extends ChangeNotifier {
 
   Future<bool> register(String name, String email, String password) async {
     isLoading = true;
-    errorMessage = null;
     notifyListeners();
     try {
-      final result = await _authService.register(name: name, email: email, password: password);
-      user = result['user'] as UserModel;
+      await _authService.register(name: name, email: email, password: password);
       return true;
     } catch (error) {
-      errorMessage = error.toString();
+      errorMessage = error.toString().replaceAll('Exception: ', '');
       return false;
     } finally {
       isLoading = false;

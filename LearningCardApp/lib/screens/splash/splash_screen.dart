@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../auth/login_screen.dart';
 import '../home/home_screen.dart';
+import '../auth/welcome_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -23,10 +24,13 @@ class _SplashScreenState extends State<SplashScreen> {
     final authProvider = context.read<AuthProvider>();
     await authProvider.tryAutoLogin();
     if (!mounted) return;
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => authProvider.isAuthenticated ? const HomeScreen() : const LoginScreen()),
-    );
+
+    if (authProvider.isAuthenticated) {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+    } else {
+      // Chuyển sang Welcome thay vì Login trực tiếp
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const WelcomeScreen()));
+    }
   }
 
   @override
