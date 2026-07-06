@@ -9,21 +9,28 @@ const register = async (req, res) => {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
+      return res.status(400).json({ success: false, message: 'Vui lòng nhập đầy đủ thông tin' });
+    }
+
+    // Kiểm tra độ dài mật khẩu tại Backend
+    if (password.length < 6) {
       return res.status(400).json({
         success: false,
-        message: 'Name, email and password are required',
+        message: 'Mật khẩu phải có ít nhất 6 ký tự',
       });
     }
 
-    const [existingUsers] = await pool.query('SELECT id FROM users WHERE email = ?', [email]);
-    if (existingUsers.length) {
-      return res.status(400).json({
-        success: false,
-        message: 'Email already exists',
-      });
+    const [existingUsers] = await pool.query(
+      'SELECT id FROM users WHERE email = ? OR name = ?', 
+      [email, name]
+    );
+
+    if (existingUsers.length > 0) {
+      return res.status(400).json({ success: false, message: 'Email hoặc Họ tên đã tồn tại' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    
     const [result] = await pool.query(
       'INSERT INTO users (name, email, password) VALUES (?, ?, ?)',
       [name, email, hashedPassword]
