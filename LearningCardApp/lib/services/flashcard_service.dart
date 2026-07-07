@@ -11,6 +11,10 @@ class FlashcardService {
     return data.map((item) => Flashcard.fromJson(item)).toList();
   }
 
+  Future<void> addCard(int setId, String front, String back) async {
+    await createCard(setId: setId, front: front, back: back);
+  }
+
   Future<void> createCard({required int setId, required String front, required String back, String example = ''}) async {
     await _api.loadSavedToken();
     await _api.dio.post('/cards', data: {
