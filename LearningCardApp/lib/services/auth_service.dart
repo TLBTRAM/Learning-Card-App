@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-
 import '../models/user_model.dart';
 import 'api_service.dart';
 
@@ -10,13 +9,20 @@ class AuthService {
     required String email,
     required String password,
   }) async {
-    final response = await _api.dio.post(
-      '/auth/login',
-      data: {'email': email, 'password': password},
-    );
-    final token = response.data['token'] as String;
-    await _api.saveToken(token);
-    return {'token': token, 'user': UserModel.fromJson(response.data['data'])};
+    try {
+      final response = await _api.dio.post(
+        '/auth/login',
+        data: {'email': email, 'password': password},
+      );
+      final token = response.data['token'] as String;
+      await _api.saveToken(token);
+      return {'token': token, 'user': UserModel.fromJson(response.data['data'])};
+    } on DioException catch (e) {
+      if (e.response != null && e.response?.data != null) {
+        throw Exception(e.response?.data['message'] ?? 'Đăng nhập thất bại.');
+      }
+      throw Exception('Không thể kết nối đến máy chủ.');
+    }
   }
 
   Future<Map<String, dynamic>> register({
@@ -29,22 +35,31 @@ class AuthService {
         '/auth/register',
         data: {'name': name, 'email': email, 'password': password},
       );
+
+      if (response.data['token'] != null) {
+        await _api.saveToken(response.data['token'] as String);
+      }
+
       return response.data;
     } on DioException catch (e) {
-      // Nếu Backend trả về 409 Conflict, Exception này sẽ kích hoạt
-      if (e.response?.statusCode == 400 || e.response?.statusCode == 409) {
-        throw Exception(
-          'Email hoặc Họ tên đã tồn tại, vui lòng chọn thông tin khác.',
-        );
+      if (e.response != null && e.response?.data != null) {
+        throw Exception(e.response?.data['message'] ?? 'Đăng ký thất bại.');
       }
-      throw Exception('Có lỗi xảy ra, vui lòng thử lại sau.');
+      throw Exception('Có lỗi xảy ra trong quá trình kết nối, vui lòng thử lại sau.');
     }
   }
 
   Future<UserModel> getProfile() async {
-    await _api.loadSavedToken();
-    final response = await _api.dio.get('/auth/profile');
-    return UserModel.fromJson(response.data['data']);
+    try {
+      await _api.loadSavedToken();
+      final response = await _api.dio.get('/auth/profile');
+      return UserModel.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      if (e.response != null && e.response?.data != null) {
+        throw Exception(e.response?.data['message'] ?? 'Không thể tải thông tin hồ sơ.');
+      }
+      throw Exception('Lỗi xác thực người dùng.');
+    }
   }
 
   Future<void> logout() => _api.clearToken();

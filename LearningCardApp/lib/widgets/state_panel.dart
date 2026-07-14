@@ -1,5 +1,5 @@
-import '../core/localization/localized_material.dart';
-
+import '../core/localization/localized_material.dart' hide Text;
+import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import 'premium_surface.dart';
 
@@ -22,49 +22,51 @@ class StatePanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 380),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 72,
-                height: 72,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? AppColors.darkSurfaceHigh
-                      : AppColors.lavenderSoft,
-                  borderRadius: BorderRadius.circular(24),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 380),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 72,
+                  height: 72,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? AppColors.darkSurfaceHigh
+                        : AppColors.lavenderSoft,
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: Icon(
+                    icon,
+                    size: 32,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? AppColors.lavender
+                        : AppColors.navy,
+                  ),
                 ),
-                child: Icon(
-                  icon,
-                  size: 32,
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? AppColors.lavender
-                      : AppColors.navy,
+                const SizedBox(height: 18),
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
-              ),
-              const SizedBox(height: 18),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                message,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                const SizedBox(height: 8),
+                Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
-              ),
-              if (actionLabel != null) ...[
-                const SizedBox(height: 20),
-                OutlinedButton(onPressed: onAction, child: Text(actionLabel!)),
+                if (actionLabel != null) ...[
+                  const SizedBox(height: 20),
+                  OutlinedButton(onPressed: onAction, child: Text(actionLabel!)),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),
@@ -106,6 +108,8 @@ class _SkeletonListState extends State<SkeletonList>
       builder: (context, _) {
         final base = Theme.of(context).colorScheme.surfaceContainerHighest;
         return ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
           padding: const EdgeInsets.all(20),
           itemCount: widget.itemCount,
           separatorBuilder: (_, _) => const SizedBox(height: 14),

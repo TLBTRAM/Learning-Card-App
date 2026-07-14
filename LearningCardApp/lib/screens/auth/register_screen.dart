@@ -52,7 +52,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (ok) {
       UiFeedback.showSuccess(
         context,
-        'Chưa thể tạo tài khoản. Vui lòng thử lại.',
+        'Tạo tài khoản thành công. Hãy đăng nhập!',
 
       );
       Navigator.pushReplacement(
@@ -63,7 +63,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       UiFeedback.showError(
         context,
         auth.errorMessage,
-        fallback: 'Tạo tài khoản thành công. Hãy đăng nhập!',
+        fallback: 'Chưa thể tạo tài khoản. Vui lòng thử lại.',
       );
     }
   }

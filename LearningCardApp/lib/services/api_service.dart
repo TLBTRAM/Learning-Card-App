@@ -6,25 +6,34 @@ import '../core/constants/api_constants.dart';
 
 class ApiService {
   ApiService._internal() {
-    if (kDebugMode) {
-      dio.interceptors.add(
-        InterceptorsWrapper(
-          onError: (error, handler) {
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          final prefs = await SharedPreferences.getInstance();
+          final token = prefs.getString(ApiConstants.tokenKey);
+          if (token != null && token.isNotEmpty) {
+            options.headers['Authorization'] = 'Bearer $token';
+          }
+          return handler.next(options);
+        },
+        onError: (error, handler) {
+          if (kDebugMode) {
             final status = error.response?.statusCode?.toString() ?? 'network';
             final serverMessage = error.response?.data is Map
                 ? error.response?.data['message']?.toString()
                 : null;
             debugPrint(
-              '[API] ${error.requestOptions.method} '
-              '${error.requestOptions.uri} -> $status '
-              '${serverMessage ?? error.type.name}',
+              '[API ERROR] ${error.requestOptions.method} '
+                  '${error.requestOptions.uri} -> $status '
+                  '${serverMessage ?? error.type.name}',
             );
-            handler.next(error);
-          },
-        ),
-      );
-    }
+          }
+          handler.next(error);
+        },
+      ),
+    );
   }
+
   static final ApiService _instance = ApiService._internal();
   factory ApiService() => _instance;
 

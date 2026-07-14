@@ -12,7 +12,6 @@ const register = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Vui lòng nhập đầy đủ thông tin' });
     }
 
-    // Kiểm tra độ dài mật khẩu tại Backend
     if (password.length < 6) {
       return res.status(400).json({
         success: false,
@@ -20,6 +19,7 @@ const register = async (req, res) => {
       });
     }
 
+    // Kiểm tra trùng lặp email hoặc tên
     const [existingUsers] = await pool.query(
       'SELECT id FROM users WHERE email = ? OR name = ?', 
       [email, name]
