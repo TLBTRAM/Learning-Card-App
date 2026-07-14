@@ -128,13 +128,15 @@ Create a `.env` file in `LearningCardApp_Backend/`:
 
 ```env
 PORT=5000
+
 DB_HOST=localhost
 DB_USER=root
-DB_PASSWORD=your_mysql_password
+DB_PASSWORD=12345
 DB_NAME=smart_flashcard_notes
-JWT_SECRET=your_jwt_secret
-OPENAI_API_KEY=
-OPENAI_MODEL=gpt-4o-mini
+
+JWT_SECRET=replace_with_a_long_secret_key
+
+GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
 Notes:
