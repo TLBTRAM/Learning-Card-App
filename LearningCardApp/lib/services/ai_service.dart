@@ -5,7 +5,10 @@ class AiService {
 
   Future<String> sendMessage(String message) async {
     await _api.loadSavedToken();
-    final response = await _api.dio.post('/ai/chat', data: {'message': message});
+    final response = await _api.dio.post(
+      '/ai/chat',
+      data: {'message': message},
+    );
     return response.data['data']['answer'] ?? '';
   }
 
@@ -17,13 +20,19 @@ class AiService {
 
   Future<String> summarizeNotes(String notes) async {
     await _api.loadSavedToken();
-    final response = await _api.dio.post('/ai/summarize-notes', data: {'notes': notes});
+    final response = await _api.dio.post(
+      '/ai/summarize-notes',
+      data: {'notes': notes},
+    );
     return response.data['data']['summary'] ?? '';
   }
 
   Future<List<Map<String, dynamic>>> generateFlashcards(String text) async {
     await _api.loadSavedToken();
-    final response = await _api.dio.post('/ai/generate-flashcards', data: {'text': text});
+    final response = await _api.dio.post(
+      '/ai/generate-flashcards',
+      data: {'text': text},
+    );
     final data = response.data['data'] as List<dynamic>;
     return data.map((item) => Map<String, dynamic>.from(item)).toList();
   }

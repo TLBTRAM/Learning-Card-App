@@ -12,13 +12,25 @@ class ChatProvider extends ChangeNotifier {
 
   Future<void> sendMessage(String message) async {
     if (message.trim().isEmpty) return;
-    messages.add(ChatMessageModel(role: 'user', message: message, createdAt: DateTime.now()));
+    messages.add(
+      ChatMessageModel(
+        role: 'user',
+        message: message,
+        createdAt: DateTime.now(),
+      ),
+    );
     isLoading = true;
     errorMessage = null;
     notifyListeners();
     try {
       final answer = await _service.sendMessage(message);
-      messages.add(ChatMessageModel(role: 'assistant', message: answer, createdAt: DateTime.now()));
+      messages.add(
+        ChatMessageModel(
+          role: 'assistant',
+          message: answer,
+          createdAt: DateTime.now(),
+        ),
+      );
     } catch (error) {
       errorMessage = error.toString();
     } finally {
@@ -29,6 +41,8 @@ class ChatProvider extends ChangeNotifier {
 
   void clear() {
     messages.clear();
+    isLoading = false;
+    errorMessage = null;
     notifyListeners();
   }
 }

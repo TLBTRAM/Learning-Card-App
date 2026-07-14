@@ -1,3 +1,5 @@
+import '../core/utils/json_value.dart';
+
 class Flashcard {
   final int id;
   final int setId;
@@ -10,19 +12,32 @@ class Flashcard {
   final String optionD;
   final String correctOption; // Lưu giá trị: 'A', 'B', 'C', hoặc 'D'
   final String example;
+  final String creatorName;
+  final String? reviewRating;
+  final DateTime? nextReviewAt;
 
   const Flashcard({
-    required this.id, required this.setId, required this.userId,
-    required this.front, required this.back, required this.example,
-    required this.optionA, required this.optionB, required this.optionC, required this.optionD,
+    required this.id,
+    required this.setId,
+    required this.userId,
+    required this.front,
+    required this.back,
+    required this.example,
+    required this.optionA,
+    required this.optionB,
+    required this.optionC,
+    required this.optionD,
     required this.correctOption,
+    this.creatorName = '',
+    this.reviewRating,
+    this.nextReviewAt,
   });
 
   factory Flashcard.fromJson(Map<String, dynamic> json) {
     return Flashcard(
-      id: json['id'] ?? 0,
-      setId: json['set_id'] ?? 0,
-      userId: json['user_id'] ?? 0,
+      id: JsonValue.asInt(json['id']),
+      setId: JsonValue.asInt(json['set_id']),
+      userId: JsonValue.asInt(json['user_id']),
       front: json['front'] ?? '',
       back: json['back'] ?? '',
       example: json['example'] ?? '',
@@ -31,6 +46,10 @@ class Flashcard {
       optionC: json['option_c'] ?? '',
       optionD: json['option_d'] ?? '',
       correctOption: json['correct_option'] ?? 'A',
+      creatorName: json['creator_name']?.toString() ?? '',
+      reviewRating:
+          json['review_rating']?.toString() ?? json['rating']?.toString(),
+      nextReviewAt: DateTime.tryParse(json['next_review_at']?.toString() ?? ''),
     );
   }
 }

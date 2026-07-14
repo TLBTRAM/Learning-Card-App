@@ -41,6 +41,8 @@ app.use('/api/cards', require('./routes/cardRoutes'));
 app.use('/api/progress', require('./routes/progressRoutes'));
 app.use('/api/notes', require('./routes/noteRoutes'));
 app.use('/api/ai', require('./routes/aiRoutes'));
+app.use('/api/search', require('./routes/searchRoutes'));
+app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 
 app.use((req, res) => {
   res.status(404).json({

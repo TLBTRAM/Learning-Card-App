@@ -37,7 +37,7 @@ const register = async (req, res) => {
     );
 
     const [users] = await pool.query(
-      'SELECT id, name, email, avatar_url, created_at, updated_at FROM users WHERE id = ?',
+      'SELECT id, name, email, avatar_url, daily_goal, created_at, updated_at FROM users WHERE id = ?',
       [result.insertId]
     );
 
@@ -94,6 +94,7 @@ const login = async (req, res) => {
         name: user.name,
         email: user.email,
         avatar_url: user.avatar_url,
+        daily_goal: user.daily_goal,
         created_at: user.created_at,
         updated_at: user.updated_at,
       },

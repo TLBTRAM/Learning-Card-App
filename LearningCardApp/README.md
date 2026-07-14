@@ -1,17 +1,42 @@
-# learningcardapp
+# Learning Card App — Flutter
 
-A new Flutter project.
+Ứng dụng flashcard, ghi chú và trợ lý học tập AI xây dựng bằng Flutter Material 3.
 
-## Getting Started
+## Chạy nhanh
 
-This project is a starting point for a Flutter application.
+```powershell
+flutter pub get
+flutter run
+```
 
-A few resources to get you started if this is your first Flutter project:
+Ứng dụng Android Emulator đang dùng API tại `http://10.0.2.2:5000/api`. Trước khi chạy Flutter, backend cần được migrate và khởi động:
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+```powershell
+cd ..\LearningCardApp_Backend
+npm install
+npm run db:demo
+npm run dev
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Tài khoản mẫu:
+
+- `minh.demo@learningcard.local` / `Demo@123`
+- `lan.demo@learningcard.local` / `Demo@123`
+
+Trong terminal khác, chạy app Flutter:
+
+```powershell
+cd ..\LearningCardApp
+flutter pub get
+flutter run
+```
+
+Xem hướng dẫn đầy đủ về thiết kế, cấu trúc, quyền riêng tư, chạy app và kết nối API trong [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md).
+
+## Kiểm tra mã nguồn
+
+```powershell
+dart format lib test
+flutter analyze
+flutter test
+```

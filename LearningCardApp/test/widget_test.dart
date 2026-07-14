@@ -6,6 +6,7 @@ void main() {
   testWidgets('app boots to splash screen', (WidgetTester tester) async {
     await tester.pumpWidget(const SmartFlashcardNotesApp());
     await tester.pump();
-    expect(find.text('LearningCardApp'), findsOneWidget);
+    expect(find.text('Learning Card App'), findsOneWidget);
+    await tester.pump(const Duration(seconds: 2));
   });
 }

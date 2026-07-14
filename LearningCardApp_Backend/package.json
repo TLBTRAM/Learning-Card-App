@@ -4,7 +4,13 @@
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "migrate": "node database/migrate.js",
+    "seed": "node database/seed.js",
+    "db:demo": "npm run migrate && npm run seed",
+    "check": "node --check server.js && node --check controllers/setController.js && node --check controllers/noteController.js && node --check controllers/cardController.js && node --check controllers/progressController.js && node --check controllers/dashboardController.js && node --check controllers/searchController.js && node --check utils/accessControl.js && node --check database/migrate.js && node --check database/seed.js && node --check tests/privacy.integration.js && node --check tests/demoSeed.integration.js",
+    "test:privacy": "node tests/privacy.integration.js",
+    "test:demo": "node tests/demoSeed.integration.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

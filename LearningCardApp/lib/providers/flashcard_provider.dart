@@ -10,20 +10,37 @@ class FlashcardProvider extends ChangeNotifier {
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+  String? errorMessage;
 
   int correctAnswers = 0;
   int wrongAnswers = 0;
 
   Future<void> loadCards(int setId) async {
     _isLoading = true;
+    errorMessage = null;
     notifyListeners();
-    _cards = await _flashcardService.getCardsBySet(setId);
-    _isLoading = false;
-    notifyListeners();
+    try {
+      _cards = await _flashcardService.getCardsBySet(setId);
+    } catch (error) {
+      errorMessage = error.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
-  Future<void> createCard({required int setId, required String front, required String back, String example = ''}) async {
-    await _flashcardService.createCard(setId: setId, front: front, back: back, example: example);
+  Future<void> createCard({
+    required int setId,
+    required String front,
+    required String back,
+    String example = '',
+  }) async {
+    await _flashcardService.createCard(
+      setId: setId,
+      front: front,
+      back: back,
+      example: example,
+    );
     await loadCards(setId);
   }
 
@@ -32,9 +49,14 @@ class FlashcardProvider extends ChangeNotifier {
     required int cardId,
     required String front,
     required String back,
-    String example = ''
+    String example = '',
   }) async {
-    await _flashcardService.updateCard(id: cardId, front: front, back: back, example: example);
+    await _flashcardService.updateCard(
+      id: cardId,
+      front: front,
+      back: back,
+      example: example,
+    );
     await loadCards(setId);
     notifyListeners();
   }
@@ -65,8 +87,25 @@ class FlashcardProvider extends ChangeNotifier {
     );
   }
 
+  Future<void> saveCardReview({required int cardId, required String rating}) {
+    return _flashcardService.saveCardReview(cardId: cardId, rating: rating);
+  }
+
+  void clear() {
+    _cards = [];
+    _isLoading = false;
+    errorMessage = null;
+    correctAnswers = 0;
+    wrongAnswers = 0;
+    notifyListeners();
+  }
+
   void markAnswer(bool isCorrect) {
-    if (isCorrect) correctAnswers++; else wrongAnswers++;
+    if (isCorrect) {
+      correctAnswers++;
+    } else {
+      wrongAnswers++;
+    }
     notifyListeners();
   }
 

@@ -1,10 +1,30 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/constants/api_constants.dart';
 
 class ApiService {
-  ApiService._internal();
+  ApiService._internal() {
+    if (kDebugMode) {
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onError: (error, handler) {
+            final status = error.response?.statusCode?.toString() ?? 'network';
+            final serverMessage = error.response?.data is Map
+                ? error.response?.data['message']?.toString()
+                : null;
+            debugPrint(
+              '[API] ${error.requestOptions.method} '
+              '${error.requestOptions.uri} -> $status '
+              '${serverMessage ?? error.type.name}',
+            );
+            handler.next(error);
+          },
+        ),
+      );
+    }
+  }
   static final ApiService _instance = ApiService._internal();
   factory ApiService() => _instance;
 

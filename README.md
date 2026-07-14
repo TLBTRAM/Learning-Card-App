@@ -7,9 +7,13 @@ Learning-Card-App is a smart flashcard and note-taking application. The project 
 - User registration and login
 - JWT-based authentication
 - Create, edit, and delete flashcard sets
+- Private-by-default flashcard sets and notes
+- Share view access by email, revoke access, or publish content
+- Creator attribution on shared flashcards and notes
 - Create, edit, and delete flashcards
 - Study mode and quiz mode
-- Save study progress
+- Real study sessions, per-card review scheduling, dashboard, and review queue
+- Immediate cross-content search for sets, cards, and notes
 - Handwriting/note-taking support
 - AI study assistant
 - AI explanation, note summary, and flashcard generation
@@ -138,6 +142,34 @@ Notes:
 - If your MySQL root account has no password, leave `DB_PASSWORD` empty.
 - `OPENAI_API_KEY` is optional. If it is empty, the AI service will return fallback responses for testing.
 
+Apply the database migration. This is required for existing databases and is safe to run again:
+
+```bash
+npm run migrate
+```
+
+### Ready-to-use demo database
+
+Create or reset the two dedicated demo accounts and their sample learning data:
+
+```bash
+npm run db:demo
+```
+
+This command runs the migration first and then loads flashcards, notes, shares, study sessions, progress, card review schedules, and AI chat examples. It can be run repeatedly and only resets the two demo accounts below; normal user accounts are not deleted.
+
+| Demo account | Email | Password |
+|---|---|---|
+| Minh Anh | `minh.demo@learningcard.local` | `Demo@123` |
+| Lan Chi | `lan.demo@learningcard.local` | `Demo@123` |
+
+The sample intentionally demonstrates privacy:
+
+- Minh has three owned flashcard sets, three notes, a seven-day streak, and one set/note shared by Lan.
+- Lan has two owned flashcard sets, two notes, and receives one set/note from Minh.
+- Private content stays hidden across accounts; shared content shows its creator; public examples are discoverable through search.
+- Run `npm run test:demo` after seeding to verify the complete sample through the API.
+
 Start the backend server:
 
 ```bash
@@ -222,6 +254,10 @@ POST   /api/sets
 GET    /api/sets/:id
 PUT    /api/sets/:id
 DELETE /api/sets/:id
+POST   /api/sets/:id/share
+GET    /api/sets/:id/shares
+DELETE /api/sets/:id/shares/:userId
+PUT    /api/sets/:id/visibility
 
 GET    /api/cards/set/:setId
 POST   /api/cards
@@ -230,12 +266,21 @@ DELETE /api/cards/:id
 
 GET    /api/progress/:setId
 POST   /api/progress
+POST   /api/progress/review
 
 GET    /api/notes
 POST   /api/notes
 GET    /api/notes/:id
 PUT    /api/notes/:id
 DELETE /api/notes/:id
+POST   /api/notes/:id/share
+GET    /api/notes/:id/shares
+DELETE /api/notes/:id/shares/:userId
+PUT    /api/notes/:id/visibility
+
+GET    /api/search?q=<query>
+GET    /api/dashboard
+GET    /api/dashboard/review
 
 POST   /api/ai/chat
 POST   /api/ai/explain
@@ -285,9 +330,34 @@ Check:
 - `/api/health` returns success
 - `baseUrl` in `api_constants.dart` matches your device/emulator
 
+### An existing database reports a missing column or table
+
+Run the versioned migration, then restart the backend:
+
+```bash
+cd LearningCardApp_Backend
+npm run migrate
+npm run dev
+```
+
+## Privacy Model
+
+- New flashcard sets and notes are private by default.
+- Only the creator can edit, delete, share, revoke, or change visibility.
+- A recipient shared by email receives read/study access and sees the creator name.
+- Public content is discoverable in search but remains editable only by its creator.
+- Flutter clears all user-scoped providers on login/logout so one account cannot inherit another account's cached lists.
+
+Run the backend privacy regression test with a disposable A/B account pair:
+
+```bash
+cd LearningCardApp_Backend
+npm run test:privacy
+```
+
 ## Current Status
 
-The project has the main MVP features implemented, including frontend screens, backend APIs, database schema, authentication, flashcards, notes, progress tracking, and AI integration. Further improvements can include stronger validation, more tests, production deployment configuration, better environment-based API config, and UI polishing.
+The project includes the redesigned Material 3 UI, private ownership and sharing, creator attribution, authenticated search, real dashboard/review data, progress tracking, notes, and AI integration.
 
 ## Author
 
