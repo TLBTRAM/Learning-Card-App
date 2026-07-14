@@ -74,10 +74,10 @@ async function run() {
       request('GET', '/notes', lanToken),
     ]);
 
-    assert(minhSets.data.length === 4, 'Minh should see 3 owned sets and 1 shared set');
-    assert(lanSets.data.length === 3, 'Lan should see 2 owned sets and 1 shared set');
-    assert(minhNotes.data.length === 4, 'Minh should see 3 owned notes and 1 shared note');
-    assert(lanNotes.data.length === 3, 'Lan should see 2 owned notes and 1 shared note');
+    assert(minhSets.data.length === 8, 'Minh should see 6 owned sets and 2 shared sets');
+    assert(lanSets.data.length === 7, 'Lan should see 5 owned sets and 2 shared sets');
+    assert(minhNotes.data.length === 8, 'Minh should see 6 owned notes and 2 shared notes');
+    assert(lanNotes.data.length === 7, 'Lan should see 5 owned notes and 2 shared notes');
     assert(
       !lanSets.data.some((set) => set.title === 'Tiếng Anh học thuật – Cốt lõi'),
       'Lan can see Minh private English set'
@@ -107,8 +107,8 @@ async function run() {
     ]);
 
     assert(dashboard.data.today.sessions === 2, 'Seeded today session count is incorrect');
-    assert(dashboard.data.study_streak === 7, 'Seeded study streak is incorrect');
-    assert(dashboard.data.shared_sets === 1, 'Seeded shared set count is incorrect');
+    assert(dashboard.data.study_streak === 14, 'Seeded study streak is incorrect');
+    assert(dashboard.data.shared_sets === 2, 'Seeded shared set count is incorrect');
     assert(review.data.due_count > 0, 'Seeded review queue is empty');
     assert(
       publicSearch.data.sets.some((set) => set.title === 'Kỹ năng học hiệu quả'),
