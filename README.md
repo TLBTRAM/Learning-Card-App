@@ -128,21 +128,18 @@ Create a `.env` file in `LearningCardApp_Backend/`:
 
 ```env
 PORT=5000
-
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=12345
 DB_NAME=smart_flashcard_notes
-
 JWT_SECRET=replace_with_a_long_secret_key
-
 GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
 Notes:
 
 - If your MySQL root account has no password, leave `DB_PASSWORD` empty.
-- `OPENAI_API_KEY` is optional. If it is empty, the AI service will return fallback responses for testing.
+- `GEMINI_API_KEY` is optional. If it is empty, the AI service will return fallback responses for testing.
 
 Apply the database migration. This is required for existing databases and is safe to run again:
 
@@ -298,7 +295,7 @@ Authorization: Bearer <token>
 
 ## AI Features
 
-The backend can connect to the OpenAI API when `OPENAI_API_KEY` is configured.
+The backend can connect to the Gemini API when `GEMINI_API_KEY` is configured.
 
 Available AI features:
 
@@ -307,7 +304,7 @@ Available AI features:
 - Summarize notes
 - Generate flashcards from text
 
-If `OPENAI_API_KEY` is not provided, the backend still returns sample fallback responses so the app UI can be tested.
+If `GEMINI_API_KEY` is not provided, the backend still returns sample fallback responses so the app UI can be tested.
 
 ## Common Issues
 
