@@ -7,7 +7,7 @@ dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
 const migrationFile = path.join(
   __dirname,
-  'migrations',
+  'migrations', 
   '001_private_sharing_and_learning.sql'
 );
 

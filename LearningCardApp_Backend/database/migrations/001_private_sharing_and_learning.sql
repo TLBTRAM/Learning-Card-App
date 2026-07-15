@@ -87,3 +87,18 @@ CREATE TABLE IF NOT EXISTS card_reviews (
   CONSTRAINT fk_reviews_card FOREIGN KEY (card_id) REFERENCES flashcards(id) ON DELETE CASCADE,
   CONSTRAINT fk_reviews_set FOREIGN KEY (set_id) REFERENCES flashcard_sets(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS chat_sessions (
+    id VARCHAR(50) PRIMARY KEY,
+    user_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_chat_sessions_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+ALTER TABLE chat_history ADD COLUMN session_id VARCHAR(50) NOT NULL AFTER user_id;
+ALTER TABLE chat_history ADD INDEX idx_chat_history_session (session_id);
+TRUNCATE TABLE chat_history;
+ALTER TABLE chat_history 
+ADD CONSTRAINT fk_chat_history_session 
+FOREIGN KEY (session_id) REFERENCES chat_sessions(id) ON DELETE CASCADE;
